@@ -5,7 +5,6 @@ use App\Service\ApiKeyService;
 use App\Repository\ApiKeyRepository;
 use App\Database\Connection;
 use App\Http\Router;
-use Dotenv;
 use App\Logging\LoggerManage;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -17,6 +16,9 @@ try {
   //definir aqui el env es mejor para evitar crear instancias cada vez que se usa la clase Connection
   $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
   $dotenv->load();
+
+  $logger = new LoggerManage();
+  $logger->Logger('info', 'hols');
 
   $repository = new ApiKeyRepository(Connection::getConnection());
   $service = new ApiKeyService($repository);

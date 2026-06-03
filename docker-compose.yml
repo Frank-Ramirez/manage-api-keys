@@ -6,8 +6,12 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    volumes:
+      - ./log:/var/www/html/log
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   db:
     image: mysql:8.0
@@ -22,6 +26,12 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./migrations/001_create_manage_keys.sql:/docker-entrypoint-initdb.d/001_create_manage_keys.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   mysql_data:
