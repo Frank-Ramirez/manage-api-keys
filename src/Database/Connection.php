@@ -28,7 +28,7 @@ class Connection
       ]);
     } catch (PDOException $e) {
       $log->Logger('error', 'PDOException - Connection DB: ' . $e->getMessage() . "\n StackTrace: " . $e->getTraceAsString());
+      throw new RuntimeException('Database connection failed', 0, $e);
     }
   }
 }
-

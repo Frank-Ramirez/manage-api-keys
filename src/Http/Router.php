@@ -5,6 +5,7 @@ namespace App\Http;
 use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 use FastRoute\Dispatcher;
+use App\Logging\LoggerManage;
 
 class Router
 {
@@ -54,7 +55,17 @@ class Router
   {
     $body = $this->getJsonBody();
 
-    return $handler($vars, $body);
+    try { //por si falla algo responder con un sttaus y evitar que se rompa
+      $logger = new LoggerManage();
+      return $handler($vars, $body);
+    } catch (\Throwable $e) {
+      $logger->Logger('error', 'Handler error- Exception: ' . $e->getMessage());
+
+      return [
+        'status' => 500,
+        'data' => ['error' => 'Internal server error'],
+      ];
+    }
   }
 
   private function getJsonBody()
